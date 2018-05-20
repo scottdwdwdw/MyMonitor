@@ -9,6 +9,8 @@ from xadmin.sites import site
 from xadmin.views.base import BaseAdminPlugin, BaseAdminView, csrf_protect_m
 from xadmin.views.website import LoginView
 
+from monitor.adminx import UserCreationForm
+
 
 class ResetPasswordSendView(BaseAdminView):
 
@@ -55,17 +57,54 @@ class ResetPasswordSendView(BaseAdminView):
 
 site.register_view(r'^xadmin/password_reset/$', ResetPasswordSendView, name='xadmin_password_reset')
 
-class ResetLinkPlugin(BaseAdminPlugin):
 
+class ResetLinkPlugin(BaseAdminPlugin):
     def block_form_bottom(self, context, nodes):
         reset_link = self.get_admin_url('xadmin_password_reset')
         return '<div class="text-info" style="margin-top:15px;"><a href="%s"><i class="fa fa-question-sign"></i> %s</a></div>' % (reset_link, _('Forgotten your password or username?'))
 
+
 site.register_plugin(ResetLinkPlugin, LoginView)
 
 
-class ResetPasswordComfirmView(BaseAdminView):
+class RegisterView(BaseAdminView):
+    need_site_permission = False
 
+    register_template = 'xadmin/views/register.html'
+    login_template = 'xadmin/views/login.html'
+    register_form = UserCreationForm
+
+    def get(self,request,*args,**kwargs):
+        context = super(RegisterView,self).get_context()
+        context['form'] = kwargs.get('form', self.register_form())
+        return TemplateResponse(request, self.register_template, context)
+
+    @csrf_protect_m
+    def post(self, request, *args, **kwargs):
+        form = self.register_form(request.POST)
+        if form.is_valid():
+            form.save()
+            context = super(RegisterView, self).get_context()
+            return TemplateResponse(request, self.login_template, context)
+        else:
+            return self.get(request, form=form)
+
+
+
+site.register_view(r'^xadmin/register/$',RegisterView,name='register')
+
+
+class RegisterPlugin(BaseAdminPlugin):
+    def block_form_bottom(self,context,nodes):
+        register_link = self.get_admin_url('register')
+        return '<div class="text-info" style="margin-top:15px;"><a href="%s"><i class="fa fa-question-sign"></i> %s</a></div>' % (register_link, _('Or Sigin Up?'))
+
+
+site.register_plugin(RegisterPlugin, LoginView)
+
+
+
+class ResetPasswordComfirmView(BaseAdminView):
     need_site_permission = False
 
     password_reset_set_form = SetPasswordForm

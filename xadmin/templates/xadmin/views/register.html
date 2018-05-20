@@ -1,0 +1,120 @@
+{% extends base_template %}
+{% load i18n xadmin_tags %}
+
+{% load crispy_forms_tags %}
+
+{% block extrastyle %}{{ block.super }}
+<style type="text/css">
+  #panel-register {
+    max-width: 350px;
+  }
+  #panel-register .controls{
+    padding: 0px 15px 15px !important;
+  }
+
+  #panel-register .alert-block{
+    padding: 0px;
+  }
+  #panel-register .alert-block ul{
+    margin: 10px 15px;
+    padding-left: 0px;
+  }
+  #panel-register .alert-block ul li{
+    list-style-type: none;
+  }
+ .btn-lg register{
+     float: left;
+     width: 50%;
+}
+.btn-lg register{
+    float: left;
+    width: 50%;
+}
+
+</style>
+{% endblock %}
+
+{% block bodyclass %}login{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  <form action="" method="post" id="register-form">
+    <div class="panel panel-default panel-single" id="panel-register">
+    {% csrf_token %}
+    {% block register_form %}
+      <div class="panel-heading">
+        {% block register_heading %}
+        <h2 class="form-register-heading">{% if title %}{{title}}{% else %}{% trans "Sigin UP" %}{% endif %}</h2>
+        {% endblock %}
+      </div>
+      <div class="panel-body">
+
+      {% view_block 'form_top' %}
+
+      {% include 'bootstrap3/errors.html' %}
+
+      <div id="div_id_username" class="row{% if form.name.errors %} has-error{% endif %}">
+        <div class="controls clearfix">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+          <input class="form-control input-lg" id="id_username" maxlength="254" name="name" type="text" placeholder="{% trans "Username" %}">
+        </div>
+        {% for error in form.name.errors %}
+            <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="text-danger help-block">{{ error }}</p>
+        {% endfor %}
+        </div>
+      </div>
+
+      <div id="div_id_password1" class="row{% if form.password1.errors %} has-error{% endif %}">
+        <div class="controls clearfix">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+          <input class="form-control input-lg" id="id_password1" name="password1" type="password" placeholder="{% trans "Password" %}">
+        </div>
+        {% for error in form.password.errors %}
+            <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="text-danger help-block">{{ error }}</p>
+        {% endfor %}
+        </div>
+      </div>
+
+      <div id="div_id_password2" class="row{% if form.password2.errors %} has-error{% endif %}">
+        <div class="controls clearfix">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+          <input class="form-control input-lg" id="id_password2" name="password2" type="password" placeholder="{% trans "Comfirm Password" %}">
+        </div>
+        {% for error in form.password2.errors %}
+            <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="text-danger help-block">{{ error }}</p>
+        {% endfor %}
+        </div>
+      </div>
+
+       <div id="div_id_email" class="row{% if form.email.errors %} has-error{% endif %}">
+        <div class="controls clearfix">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+          <input class="form-control input-lg" id="id_email" name="text" type="email" placeholder="{% trans "Email" %}">
+        </div>
+        {% for error in form.email.errors %}
+            <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="text-danger help-block">{{ error }}</p>
+        {% endfor %}
+        </div>
+      </div>
+
+      <input type="hidden" name="this_is_the_register_form" value="1" />
+      <input type="hidden" name="next" value="{{ next }}" />
+
+      <button name='register Now' class="btn btn-lg btn-primary btn-block" type="submit">{% trans 'Register Now' %}</button>
+
+      </div>
+    {% endblock %}
+    </div>
+  </form>
+
+</div> <!-- /container -->
+
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
+{% endblock %}

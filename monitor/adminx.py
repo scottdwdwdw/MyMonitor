@@ -15,6 +15,8 @@ class UserCreationForm(UserCreationForm):
     fields, plus a repeated password."""
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    name = forms.CharField(label='username',widget=forms.TextInput)
+    email = forms.EmailField(label='email',widget=forms.EmailInput)
 
     class Meta:
         model = models.UserProfile
@@ -27,6 +29,9 @@ class UserCreationForm(UserCreationForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
+
+    def is_valid(self):
+        return self.is_bound and not self.errors
 
     def save(self, commit=True):
         # Save the provided password in hashed format

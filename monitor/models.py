@@ -226,5 +226,5 @@ class UserProfile(auth.AbstractBaseUser, auth.PermissionsMixin):
     objects = auth.UserManager()
 
     class Meta:
-        verbose_name = '账户'
-        verbose_name_plural = '账户'
+        verbose_name = '用户'
+        verbose_name_plural = '用户'
